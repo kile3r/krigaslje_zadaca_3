@@ -1,0 +1,3 @@
+komanda;lista vozila;
+feg;
+STATUS;
