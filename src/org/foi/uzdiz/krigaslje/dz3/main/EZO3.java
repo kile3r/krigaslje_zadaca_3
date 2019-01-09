@@ -3,9 +3,7 @@ package org.foi.uzdiz.krigaslje.dz3.main;
 import java.util.List;
 import mvc.WindowController;
 import org.fo.uzdiz.krigaslje.dz3.singleton.Parametri;
-import org.fo.uzdiz.krigaslje.dz3.singleton.RndGenerator;
-import org.foi.uzdiz.krigaslje.dz3.factoryMethod.FileReader;
-import org.foi.uzdiz.krigaslje.dz3.factoryMethod.ReaderFactory;
+import org.foi.uzdiz.krigaslje.dz3.composite.Ulica;
 import org.foi.uzdiz.krigaslje.dz3.model.Vozilo;
 
 /**
@@ -67,24 +65,15 @@ public class EZO3 {
         DataImporter di = new DataImporter();
         InicijalizatorSustava is = new InicijalizatorSustava(di);
         
-        
-
-        
-        
-        
-        ReaderFactory rfp = new ReaderFactory("dispecer");
-        FileReader frp = rfp.fileReader();
-        List<String[]> zapisiDispecera = frp.getRecords();
-        
         List<Vozilo> listaVozila = is.inicijalizacijaVozila();
-        //Dispecer d = new Dispecer(wc, is.inicijalizirajPodrucje(), listaVozila, is.inicijalizacijaVozaca(listaVozila));
+        Ulica ulica= new Ulica();
+        ulica.odrediKorisnike();
+        ulica.inicijalizirajKorisnike();
+        ulica.dodajKorisnikuSpremnike(di.getSpremnici());
+        ulica.odloziOtpad();
         
         WindowController wc = new WindowController(is.inicijalizirajPodrucje(), listaVozila, is.inicijalizacijaVozaca(listaVozila));
-        
-        for(String[] parametri : zapisiDispecera){
-                    wc.obradiKomandeDatoteke(parametri);
-        }
-        //ovoo sve krivo piše jer nije ispisLInije() u kontroleru
+        wc.pricekajKomandu();
         
     }
 

@@ -7,8 +7,8 @@ package org.foi.uzdiz.krigaslje.dz3.main;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.foi.uzdiz.krigaslje.dr3.composite.Podrucje;
-import org.foi.uzdiz.krigaslje.dr3.composite.Ulica;
+import org.foi.uzdiz.krigaslje.dz3.composite.Podrucje;
+import org.foi.uzdiz.krigaslje.dz3.composite.Ulica;
 import org.foi.uzdiz.krigaslje.dz3.model.Korisnik;
 import org.foi.uzdiz.krigaslje.dz3.model.Spremnik;
 import org.foi.uzdiz.krigaslje.dz3.model.Vozac;

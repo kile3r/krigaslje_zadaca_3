@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.foi.uzdiz.krigaslje.dr3.composite;
+package org.foi.uzdiz.krigaslje.dz3.composite;
 
 /**
  *

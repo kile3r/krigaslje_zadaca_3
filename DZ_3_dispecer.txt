@@ -1,3 +1,7 @@
 komanda;lista vozila;
 feg;
-STATUS;
+GODIŠNJI ODMOR;pero,ivo;
+OTKAZ;fran,luka,miki;
+OTKAZ;dudo;
+NOVI;renato,kile;
+PREUZMI;kile;v4;
