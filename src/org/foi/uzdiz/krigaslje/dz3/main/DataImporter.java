@@ -7,7 +7,7 @@ package org.foi.uzdiz.krigaslje.dz3.main;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.fo.uzdiz.krigaslje.dz3.singleton.Parametri;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Parametri;
 import org.foi.uzdiz.krigaslje.dz3.factoryMethod.FileReader;
 import org.foi.uzdiz.krigaslje.dz3.factoryMethod.ReaderFactory;
 import org.foi.uzdiz.krigaslje.dz3.model.Spremnik;

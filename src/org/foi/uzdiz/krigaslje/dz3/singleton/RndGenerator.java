@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.fo.uzdiz.krigaslje.dz3.singleton;
+package org.foi.uzdiz.krigaslje.dz3.singleton;
 
 import java.util.Random;
 /**

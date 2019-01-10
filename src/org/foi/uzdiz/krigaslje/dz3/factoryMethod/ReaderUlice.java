@@ -9,43 +9,44 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
-import org.fo.uzdiz.krigaslje.dz3.singleton.Ispis;
-import org.fo.uzdiz.krigaslje.dz3.singleton.Parametri;
-
+import org.foi.uzdiz.krigaslje.dz3.singleton.Ispis;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Parametri;
 
 /**
  *
  * @author kile
  */
-public class ReaderUlice implements FileReader{
-    
+public class ReaderUlice implements FileReader {
+
     @Override
     public List<String[]> getRecords() {
         String fileName = Parametri.getDatotekaUlice();
         List<String[]> listaUlica = new ArrayList<>();
-        try{
+        try {
             RandomAccessFile file = new RandomAccessFile(fileName, "r");
             String str;
             file.readLine(); //skip first row
-            while((str = file.readLine())!= null){
+            while ((str = file.readLine()) != null) {
                 str = new String(str.getBytes("ISO-8859-1"), "UTF-8");
-                if(isOkUlica(str)){
-                        listaUlica.add(str.split(";"));
-                }else{
+                if (isOkUlica(str)) {
+                    listaUlica.add(str.split(";"));
+                } else {
                     Ispis.getInstance().ispis("Nepravilan zapis u datoteci ulica: " + str);
+                }
             }
-        }
-        }catch(IOException e){
-            
+        } catch (IOException e) {
+
         }
         return listaUlica;
     }
-    
-    private boolean isOkUlica(String str){
+
+    private boolean isOkUlica(String str) {
         String[] parts = str.split(";");
-        if(parts.length==6){
+        if (parts.length == 6) {
             //TODO: check integera 
             return true;
-        }else return false;
+        } else {
+            return false;
+        }
     }
 }

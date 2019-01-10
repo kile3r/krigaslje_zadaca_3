@@ -7,6 +7,9 @@ package org.foi.uzdiz.krigaslje.dz3.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.foi.uzdiz.krigaslje.dz3.composite.Ulica;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Ispis;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Parametri;
 
 /**
  *
@@ -23,6 +26,11 @@ public class Vozilo {
     int nosivost;
     int status;  // 0-pripremi 1- kvar 2- kontorla 3- isprazni
     public List<Vozac> listaVozaca;
+    
+    int trenutnaKolicina;
+    int ciklusiOdvoza;
+    
+    String vrstaString;
 
     public Vozilo() {
     }
@@ -35,6 +43,9 @@ public class Vozilo {
         nosivost = Integer.parseInt(zapisi[4]);
         listaVozaca = dodajVozace(zapisi[5]);
         status = 0;
+        trenutnaKolicina = 0;
+        ciklusiOdvoza = 0;
+        vrstaString = mapirajVrstu(vrsta);
 
     }
 
@@ -49,6 +60,48 @@ public class Vozilo {
         }
         return listaVozaca;
     }
+    
+    
+    public void preuzmiOtpad(List<Ulica> ulice){
+        if(status==1){
+            for(Ulica u : ulice){
+                for(Spremnik s: u.spremnici){
+                    if(s.naziv.equals(vrstaString)&&s.kolicinaOtpada>0){
+                        if((trenutnaKolicina+s.kolicinaOtpada)<nosivost){
+                            trenutnaKolicina+=s.kolicinaOtpada;
+                            
+                            Ispis.getInstance().uvjetovaniIspis("Vozilo " + naziv + " je preuzelo " + s.kolicinaOtpada +"kg otpada iz spremnika " + ". #= " + trenutnaKolicina + "/" + nosivost);
+                            s.kolicinaOtpada = 0;
+                        }else{
+                            status = 0;
+                            Ispis.getInstance().uvjetovaniIspis("Vozilo " + naziv + " je napunjeno i odvozi otpad na odlagalište!");
+                        }
+                        return;
+                    }
+                }
+            }
+        }else{
+            ciklusiOdvoza++;
+            if(ciklusiOdvoza>=Parametri.getBrojRadnihCiklusaZaOdvoz()){
+                ciklusiOdvoza=0;
+                status=1;
+                trenutnaKolicina = 0;
+                Ispis.getInstance().uvjetovaniIspis("Vozilo " + naziv + " je obavilo odvoz otpada na odlagalište!");
+            }else{
+                Ispis.getInstance().uvjetovaniIspis("Vozilo " + naziv + " odvozi otpad na odlagalište!");
+            }
+        }
+    }
+    
+    private String mapirajVrstu(int vrsta){
+        if(vrsta==0) return "staklo";
+        if(vrsta==1) return "papir";
+        if(vrsta==2) return "metal";
+        if(vrsta==3) return "bio";
+        if(vrsta==4) return "mješano";
+        else return "";
+    }
+    
 
     public String getId() {
         return id;
@@ -105,6 +158,32 @@ public class Vozilo {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public int getTrenutnaKolicina() {
+        return trenutnaKolicina;
+    }
+
+    public void setTrenutnaKolicina(int trenutnaKolicina) {
+        this.trenutnaKolicina = trenutnaKolicina;
+    }
+
+    public int getCiklusiOdvoza() {
+        return ciklusiOdvoza;
+    }
+
+    public void setCiklusiOdvoza(int ciklusiOdvoza) {
+        this.ciklusiOdvoza = ciklusiOdvoza;
+    }
+
+    public String getVrstaString() {
+        return vrstaString;
+    }
+
+    public void setVrstaString(String vrstaString) {
+        this.vrstaString = vrstaString;
+    }
+    
+    
     
     
 

@@ -2,9 +2,8 @@ package org.foi.uzdiz.krigaslje.dz3.main;
 
 import java.util.List;
 import mvc.WindowController;
-import org.fo.uzdiz.krigaslje.dz3.singleton.Parametri;
-import org.foi.uzdiz.krigaslje.dz3.composite.Ulica;
 import org.foi.uzdiz.krigaslje.dz3.model.Vozilo;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Parametri;
 
 /**
  *
@@ -64,17 +63,12 @@ public class EZO3 {
 
         DataImporter di = new DataImporter();
         InicijalizatorSustava is = new InicijalizatorSustava(di);
-        
+
         List<Vozilo> listaVozila = is.inicijalizacijaVozila();
-        Ulica ulica= new Ulica();
-        ulica.odrediKorisnike();
-        ulica.inicijalizirajKorisnike();
-        ulica.dodajKorisnikuSpremnike(di.getSpremnici());
-        ulica.odloziOtpad();
-        
+
         WindowController wc = new WindowController(is.inicijalizirajPodrucje(), listaVozila, is.inicijalizacijaVozaca(listaVozila));
         wc.pricekajKomandu();
-        
+
     }
 
 }

@@ -12,5 +12,6 @@ import java.util.List;
  * @author kile
  */
 public interface FileReader {
+
     public List<String[]> getRecords();
 }

@@ -7,8 +7,8 @@ package org.foi.uzdiz.krigaslje.dz3.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.fo.uzdiz.krigaslje.dz3.singleton.Parametri;
-import org.fo.uzdiz.krigaslje.dz3.singleton.RndGenerator;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Parametri;
+import org.foi.uzdiz.krigaslje.dz3.singleton.RndGenerator;
 
 /**
  *

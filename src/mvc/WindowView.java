@@ -15,9 +15,7 @@ import static org.foi.uzdiz.krigaslje.dz3.main.EZO3.ANSI_ESC;
  * @author kile
  */
 public class WindowView {
-    
-    
-    
+
     int brojIspisanihLinija = 0;
 
     List<String> medjuspremnikKomandi;
@@ -25,16 +23,16 @@ public class WindowView {
     public WindowView() {
         medjuspremnikKomandi = new ArrayList<>();
 
-        for (int i = 0; i < Integer.valueOf(EZO3.brojRedakaKomandi)-1; i++) {
+        for (int i = 0; i < Integer.valueOf(EZO3.brojRedakaKomandi) - 1; i++) {
             medjuspremnikKomandi.add(" ");
         }
 
-        
     }
 
     public void obrisiEkran() {
         System.out.print(ANSI_ESC + "2J");//brise ekran
     }
+
     public void initializeWindow() {
 
         obrisiEkran();
@@ -55,13 +53,13 @@ public class WindowView {
             ispisiNaPoziciji(br, i, 20, "-");
             ispisiNaPoziciji(br - brk - 1, i, 20, "-");
         }
-        
+
         brojIspisanihLinija = 0;
-        ispisKomandi();   
+        ispisKomandi();
 
     }
-    
-    public void resetirajKursor(){
+
+    public void resetirajKursor() {
         int br = Integer.valueOf(EZO3.brojRedaka);
         postaviKursor(br - 1, 2);
     }
@@ -69,11 +67,11 @@ public class WindowView {
     static void postaviKursor(int x, int y) {
         System.out.print(ANSI_ESC + x + ";" + y + "f");
     }
-    
+
     public void ispisiLinijuNaPoziciji(int x, int y, int boja, String tekst) {
         postaviKursor(x, y);
         System.out.print(ANSI_ESC + boja + "m");
-        System.out.print(String.format("%1$-" + (EZO3.brojStupaca-2) + "s", tekst));
+        System.out.print(String.format("%1$-" + (EZO3.brojStupaca - 2) + "s", tekst));
         System.out.println(ANSI_ESC + "0m");
         resetirajKursor();
     }
@@ -85,7 +83,7 @@ public class WindowView {
         System.out.println(ANSI_ESC + "0m");
         resetirajKursor();
     }
-    
+
     public void zabiljeziKomandu(String a) {
         medjuspremnikKomandi.add(a);
         medjuspremnikKomandi.remove(0);
@@ -95,10 +93,10 @@ public class WindowView {
     private void ispisKomandi() {
         int br = Integer.valueOf(EZO3.brojRedaka);
         int brk = Integer.valueOf(EZO3.brojRedakaKomandi);
-        for(int i = 0; i < medjuspremnikKomandi.size(); i++) {
-            ispisiLinijuNaPoziciji(br-brk+i, 2, 20, medjuspremnikKomandi.get(i));
+        for (int i = 0; i < medjuspremnikKomandi.size(); i++) {
+            ispisiLinijuNaPoziciji(br - brk + i, 2, 20, medjuspremnikKomandi.get(i));
         }
-        ispisiLinijuNaPoziciji(br-1, 2, 20, " ");
+        ispisiLinijuNaPoziciji(br - 1, 2, 20, " ");
     }
 
     public boolean ispis(String a) {
@@ -115,6 +113,5 @@ public class WindowView {
 
         return true;
     }
-    
-    
+
 }

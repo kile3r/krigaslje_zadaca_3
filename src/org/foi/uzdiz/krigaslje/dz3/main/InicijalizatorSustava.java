@@ -73,6 +73,7 @@ public class InicijalizatorSustava {
             }
 
         }
+        
 
         for (Podrucje ishodiste : listaPodrucja) {
             if (ishodiste.isIshodiste()) {
@@ -88,19 +89,12 @@ public class InicijalizatorSustava {
         s.popuniListuSpremnika();
 
         for (Ulica ulica : listaUlica) {
-            //System.out.println("U ulici" + ulica.getNaziv() + "se nalazi ");
             ulica.odrediKorisnike();
             ulica.inicijalizirajKorisnike();
             ulica.dodajKorisnikuSpremnike(s.listaSpremnika);
             for (Korisnik k : ulica.stanovnici) {
                 k.generirajOtpad();
-                //System.out.println("\nKorisnik [" + k.id + "] ima otpad");
-//                System.out.println("Metal " + k.otpadMetal
-//                        + "\nPapir " + k.otpadPapir
-//                        + "\nStaklo " + k.otpadStaklo
-//                        + "\nBio " + k.otpadBio
-//                        + "\nMjesano " + k.otpadMjesano
-//                );
+
                 ulica.otpadMetal += k.otpadMetal;
                 ulica.otpadPapir += k.otpadPapir;
                 ulica.otpadStaklo += k.otpadStaklo;
@@ -135,4 +129,5 @@ public class InicijalizatorSustava {
         }
         return listaVozaca;
     }
+
 }

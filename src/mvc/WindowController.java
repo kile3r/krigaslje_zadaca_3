@@ -13,15 +13,18 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.fo.uzdiz.krigaslje.dz3.singleton.Parametri;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Parametri;
 import org.foi.uzdiz.krigaslje.dz3.composite.Naselje;
 import org.foi.uzdiz.krigaslje.dz3.composite.Podrucje;
 import org.foi.uzdiz.krigaslje.dz3.composite.Ulica;
 import org.foi.uzdiz.krigaslje.dz3.factoryMethod.FileReader;
 import org.foi.uzdiz.krigaslje.dz3.factoryMethod.ReaderFactory;
+import org.foi.uzdiz.krigaslje.dz3.main.DataImporter;
 import org.foi.uzdiz.krigaslje.dz3.main.EZO3;
+import org.foi.uzdiz.krigaslje.dz3.main.InicijalizatorSustava;
 import org.foi.uzdiz.krigaslje.dz3.model.Vozac;
 import org.foi.uzdiz.krigaslje.dz3.model.Vozilo;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Ispis;
 
 /**
  *
@@ -42,8 +45,12 @@ public class WindowController {
 
     public boolean postojiVozilo = false;
     public boolean postojiVozac = false;
-    
+
     Map<String, float[]> mapaOtpadaUkupno = new HashMap<>();
+    Ulica ulica;
+
+    DataImporter di;
+    InicijalizatorSustava is;
 
     //ovo jelista koja se puni s nečim kaj se ispisuje 
     List<String> listaSpremnik;
@@ -56,16 +63,18 @@ public class WindowController {
         this.listaVozila = listaVozila;
         this.listVozac = listVozac;
         noviVozaci = new ArrayList<>();
+        di = new DataImporter();
+        is = new InicijalizatorSustava(di);
+
         ispisiLinije(listaSpremnik);
-        
-        //ispisiInicijaliziraniSustav();
-        
+
+        ispisiInicijaliziraniSustav();
+
         ReaderFactory rfp = new ReaderFactory("dispecer");
         FileReader frp = rfp.fileReader();
         List<String[]> zapisiDispecera = frp.getRecords();
         obradiDatoteku(zapisiDispecera);
-        
-        
+
         pricekajKomandu();
 
     }
@@ -141,7 +150,6 @@ public class WindowController {
                 break;
             case "PRIPREMI":
                 pripremi(parametri[1]);
-                System.out.println("Priprema");
                 break;
             case "KRENI":
                 kreni();
@@ -154,8 +162,7 @@ public class WindowController {
                 kontrola(parametri[1]);
                 break;
             case "ISPRAZNI":
-                isprazni();
-                System.out.println("prazni");
+                isprazni(parametri[1]);
                 break;
             case "STATUS":
                 status();
@@ -193,7 +200,7 @@ public class WindowController {
     }
 
     private void izlaz() {
-        ispisiLiniju("Gasim...");
+        ispis("Gasim...");
         System.exit(0);
     }
 
@@ -203,7 +210,7 @@ public class WindowController {
             for (String str : vozila) {
                 if (str.equals(vozilo.getId())) {
                     vozilo.setStatus(0);
-                    ispisiLiniju("Vozilo " + vozilo.getId() + " je spremno za preuzimanje otpada");
+                    ispis("Vozilo " + vozilo.getId() + " je spremno za preuzimanje otpada");
                 }
             }
         }
@@ -220,7 +227,7 @@ public class WindowController {
             for (String str : vozila) {
                 if (str.equals(vozilo.getId())) {
                     vozilo.setStatus(1);
-                    ispisiLiniju("Vozilo " + vozilo.getId() + " je u kvaru");
+                    ispis("Vozilo " + vozilo.getId() + " je u kvaru");
                 }
             }
         }
@@ -233,20 +240,33 @@ public class WindowController {
             for (String str : vozila) {
                 if (str.equals(vozilo.getId())) {
                     vozilo.setStatus(2);
-                    ispisiLiniju("Vozilo " + vozilo.getId() + " je u kontroli");
+                    ispis("Vozilo " + vozilo.getId() + " je u kontroli");
                 }
             }
         }
     }
 
-    private void isprazni() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void isprazni(String parametar) {
+        String[] vozila = parametar.split(",");
+        for (Vozilo vozilo : listaVozila) {
+            for (String str : vozila) {
+                if (str.equals(vozilo.getId())) {
+                    vozilo.setTrenutnaKolicina(0);
+                    ispis("Vozilo " + vozilo.getId() + " je prazno");
+                }
+            }
+        }
+        
     }
 
     private void status() {
+        ispisiLiniju("VoziloId\tNaziv\tStatus\tTip\tNosivost");
+        Ispis.getInstance().uvjetovaniIspis("VoziloId\tNaziv\tStatus\tTip\tNosivost");
         for (Vozilo vozilo : listaVozila) {
             if (vozilo.getStatus() != 1) {
-                ispisiLiniju("Vozilo[" + vozilo.getId() + "] naziv " + vozilo.getNaziv() + " status " + vozilo.getStatus() + " tip " + vozilo.getTip() + " nosivost " + vozilo.getNosivost());
+                ispisiLiniju(vozilo.getId() + "\t" + vozilo.getNaziv() + "\t" + vozilo.getStatus() + "\t" + vozilo.getTip() + "\t" + vozilo.getNosivost());
+                Ispis.getInstance().uvjetovaniIspis(vozilo.getId() + "\t" + vozilo.getNaziv() + "\t" + vozilo.getStatus() + "\t" + vozilo.getTip() + "\t" + vozilo.getNosivost());
+
             }
 
         }
@@ -325,17 +345,17 @@ public class WindowController {
                 for (Vozac vozac : vozilo.getListaVozaca()) {
                     if (vozac.getIme().trim().equals(vozacIme.trim())) {
                         dodajUVozilo(voziloId, vozac);
-                        //dajPopisVOzilaIVozaca();
+
+                        ispis("Vozac" + vozac.getIme().trim() + " dodan u vozilo " + voziloId);
                         vozilo.listaVozaca.remove(vozac);
-                        //makniIzOriginalVozila(vozac, idMaticnogVozila);
-                        dajPopisVOzilaIVozaca();
+                        ispis("Vozac" + vozac.getIme().trim() + " maknut iz vozila " + vozilo.getId());
                         break;
                     }
                 }
                 break;
             }
         } else {
-            ispisiLiniju("Čini se da ne postoji vozač ili vozilo koje ste unjeli.");
+            ispis("Čini se da ne postoji vozač ili vozilo koje ste unjeli.");
         }
     }
 
@@ -348,22 +368,6 @@ public class WindowController {
 
     }
 
-//    private void makniIzOriginalVozila(Vozac v, String idMaticnogVozila) {
-//        for (Vozilo vozilo : listaVozila) {
-//            if (vozilo.getId().equals(idMaticnogVozila)) {
-//                ispisiLiniju("nasal sam ti vozilo");
-//                for (Vozac vozac : vozilo.getListaVozaca()) {
-//                    if (vozac.getIme().trim().equals(v.getIme().trim())) {
-//                        ispisiLiniju("Vozac ime " + v.getIme());
-//                        ispisiLiniju("Od objekta " + vozac.getIme());
-//                        vozilo.listaVozaca.remove(vozac);
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     private void novi(String parametar) {
 
         String[] vozaci = parametar.split(",");
@@ -375,11 +379,11 @@ public class WindowController {
         for (Vozilo vozilo : listaVozila) {
             int brojVozaca = noviVozaci.size();
             if (noviVozaci.isEmpty() || imaAktivnihVozaca(vozilo.getListaVozaca())) {
-                //ne puni se lista voazcima jer ili ima nekog aktivnog ili je lista novih prazna
-                ispisiLiniju("Nema raspoloživih novih vozača za dodati u vozilo" +vozilo.getNaziv()+  " ili u vozilu postoji aktivni vozač");
+                ispis("Nema raspoloživih novih vozača za dodati u vozilo " + vozilo.getNaziv() + " ili u vozilu postoji aktivni vozač");
             } else if (vozilo.getListaVozaca().isEmpty() || !imaAktivnihVozaca(vozilo.getListaVozaca()) || !noviVozaci.isEmpty()) {
                 vozilo.listaVozaca.add(noviVozaci.get(brojVozaca - 1));
                 noviVozaci.remove(brojVozaca - 1);
+                ispis("Novi vozac dodan u " + vozilo.getNaziv());
             }
         }
     }
@@ -398,15 +402,16 @@ public class WindowController {
     }
 
     private void vozaci() {
+        ispisiLiniju("Vozac\tStatus\tVozilo");
         for (Vozilo vozilo : listaVozila) {
             for (Vozac vozac : vozilo.getListaVozaca()) {
-                ispisiLiniju("Vozac " + vozac.getIme().trim() + " ima status " + vozac.getStatus());
+                ispis(vozac.getIme().trim() + "\t" + vozac.getStatus() + "\t" + vozilo.getNaziv());
             }
         }
     }
 
     private void ispisiGresku() {
-        ispisiLiniju("Nepostojeca komanda. Preskacem");
+        ispis("Nepostojeca komanda. Preskacem");
     }
 
     private void promijeniStatusVozacu(String ime, int status) {
@@ -415,13 +420,14 @@ public class WindowController {
             for (Vozac vozac : vozilo.getListaVozaca()) {
                 if (vozac.getIme().equals(ime)) {
                     vozac.setStatus(status);
-                    ispisiLiniju("Vozac" + vozac.getIme().trim() + " ima novi status " + vozac.getStatus());
+                    ispis("Vozac" + vozac.getIme().trim() + " ima novi status " + vozac.getStatus());
                 }
             }
         }
 
     }
 
+    //test metoda a
     private void dajPopisVOzilaIVozaca() {
         for (Vozilo vozilo : listaVozila) {
             ispisiLiniju("Vozilo ima : " + vozilo.getNaziv().trim());
@@ -432,39 +438,38 @@ public class WindowController {
     }
 
     private void obradiDatoteku(List<String[]> zapisiDispecera) {
-        for(String[] parametri : zapisiDispecera){
-                    obradiKomande(parametri);
+        for (String[] parametri : zapisiDispecera) {
+            obradiKomande(parametri);
         }
     }
-    
-    
+
     public void ispisiInicijaliziraniSustav() {
         for (Podrucje podrucje : listaPodrucja) {
             ispisiLiniju("ID\tStaklo\tPapir\tMetal\tBio\tMjesano");
             zbrajanjePoUlicama((Naselje) podrucje);
             zbrajanjePoPodrucjima((Naselje) podrucje);
             zbrajanjePoIshodistu((Naselje) podrucje);
-            ispisiLiniju(podrucje.getId() + "\t" + mapaOtpadaUkupno.get(podrucje.getId())[0] + "\t" + mapaOtpadaUkupno.get(podrucje.getId())[1] + "\t"
+            ispis(podrucje.getId() + "\t" + mapaOtpadaUkupno.get(podrucje.getId())[0] + "\t" + mapaOtpadaUkupno.get(podrucje.getId())[1] + "\t"
                     + mapaOtpadaUkupno.get(podrucje.getId())[2] + "\t" + mapaOtpadaUkupno.get(podrucje.getId())[3] + "\t" + mapaOtpadaUkupno.get(podrucje.getId())[4]);
             ispisPodrucja((Naselje) podrucje);
-            ispisiLiniju("\n");
+            ispis("\n");
         }
     }
-    
+
     private void ispisPodrucja(Naselje naselje) {
         for (Naselje podnaselje : ((Podrucje) naselje).getPotPodrucja()) {
             if (podnaselje instanceof Podrucje) {
                 String key = ((Podrucje) podnaselje).getId();
-                ispisiLiniju(key + "\t" + mapaOtpadaUkupno.get(key)[0] + "\t" + mapaOtpadaUkupno.get(key)[1] + "\t"
-                    + mapaOtpadaUkupno.get(key)[2] + "\t" + mapaOtpadaUkupno.get(key)[3] + "\t" + mapaOtpadaUkupno.get(key)[4]);
+                ispis(key + "\t" + mapaOtpadaUkupno.get(key)[0] + "\t" + mapaOtpadaUkupno.get(key)[1] + "\t"
+                        + mapaOtpadaUkupno.get(key)[2] + "\t" + mapaOtpadaUkupno.get(key)[3] + "\t" + mapaOtpadaUkupno.get(key)[4]);
                 ispisPodrucja(podnaselje);
             } else {
-                ispisiLiniju(((Ulica) podnaselje).getId() + "\t" + ((Ulica) podnaselje).otpadStaklo + "\t" + ((Ulica) podnaselje).otpadPapir + "\t"
+                ispis(((Ulica) podnaselje).getId() + "\t" + ((Ulica) podnaselje).otpadStaklo + "\t" + ((Ulica) podnaselje).otpadPapir + "\t"
                         + ((Ulica) podnaselje).otpadMetal + "\t" + ((Ulica) podnaselje).otpadBio + "\t" + ((Ulica) podnaselje).otpadMjesano);
             }
         }
     }
-    
+
     private void zbrajanjePoUlicama(Naselje naselje) {
         for (Naselje podnaselje : ((Podrucje) naselje).getPotPodrucja()) {
             if (podnaselje instanceof Podrucje) {
@@ -483,32 +488,34 @@ public class WindowController {
             }
         }
     }
-    
+
     private void zbrajanjePoPodrucjima(Naselje naselje) {
         for (Naselje podnaselje : ((Podrucje) naselje).getPotPodrucja()) {
             if (podnaselje instanceof Podrucje) {
                 for (Naselje manjeNaselje : ((Podrucje) podnaselje).getPotPodrucja()) {
-                    String key = ((Podrucje) podnaselje).getId();
-                    if (mapaOtpadaUkupno.containsKey(key)) {
-                        mapaOtpadaUkupno.get(key)[0] = mapaOtpadaUkupno.get(key)[0] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[0];
-                        mapaOtpadaUkupno.get(key)[1] = mapaOtpadaUkupno.get(key)[1] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[1];
-                        mapaOtpadaUkupno.get(key)[2] = mapaOtpadaUkupno.get(key)[2] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[2];
-                        mapaOtpadaUkupno.get(key)[3] = mapaOtpadaUkupno.get(key)[3] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[3];
-                        mapaOtpadaUkupno.get(key)[4] = mapaOtpadaUkupno.get(key)[4] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[4];
-                    } else {
-                        mapaOtpadaUkupno.put(key, new float[] {
-                            mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[0],
-                            mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[1],
-                            mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[2],
-                            mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[3],
-                            mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[4]
-                        });
+                    if (manjeNaselje instanceof Podrucje) {
+                        String key = ((Podrucje) podnaselje).getId();
+                        if (mapaOtpadaUkupno.containsKey(key)) {
+                            mapaOtpadaUkupno.get(key)[0] = mapaOtpadaUkupno.get(key)[0] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[0];
+                            mapaOtpadaUkupno.get(key)[1] = mapaOtpadaUkupno.get(key)[1] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[1];
+                            mapaOtpadaUkupno.get(key)[2] = mapaOtpadaUkupno.get(key)[2] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[2];
+                            mapaOtpadaUkupno.get(key)[3] = mapaOtpadaUkupno.get(key)[3] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[3];
+                            mapaOtpadaUkupno.get(key)[4] = mapaOtpadaUkupno.get(key)[4] + mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[4];
+                        } else {
+                            mapaOtpadaUkupno.put(key, new float[]{
+                                mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[0],
+                                mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[1],
+                                mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[2],
+                                mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[3],
+                                mapaOtpadaUkupno.get(((Podrucje) manjeNaselje).getId())[4]
+                            });
+                        }
                     }
                 }
             }
         }
     }
-    
+
     private void zbrajanjePoIshodistu(Naselje naselje) {
         for (Naselje podnaselje : ((Podrucje) naselje).getPotPodrucja()) {
             if (podnaselje instanceof Podrucje) {
@@ -530,6 +537,11 @@ public class WindowController {
                 }
             }
         }
+    }
+
+    public void ispis(String tekst) {
+        Ispis.getInstance().uvjetovaniIspis(tekst);
+        ispisiLiniju(tekst);
     }
 
 }

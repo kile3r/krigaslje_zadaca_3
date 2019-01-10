@@ -13,7 +13,7 @@ import java.util.List;
  * @author kile
  */
 public class Podrucje implements Naselje {
-    
+
     String id;
     String naziv;
     boolean ishodiste;
@@ -56,5 +56,5 @@ public class Podrucje implements Naselje {
 
     public void setPotPodrucja(List<Naselje> potPodrucja) {
         this.potPodrucja = potPodrucja;
-    } 
+    }
 }

@@ -7,7 +7,7 @@ package org.foi.uzdiz.krigaslje.dz3.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.fo.uzdiz.krigaslje.dz3.singleton.Ispis;
+import org.foi.uzdiz.krigaslje.dz3.singleton.Ispis;
 import org.foi.uzdiz.krigaslje.dz3.main.DataImporter;
 
 /**

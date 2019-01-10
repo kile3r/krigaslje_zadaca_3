@@ -1,4 +1,4 @@
-package org.fo.uzdiz.krigaslje.dz3.singleton;
+package org.foi.uzdiz.krigaslje.dz3.singleton;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

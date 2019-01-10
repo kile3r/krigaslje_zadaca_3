@@ -10,5 +10,5 @@ package org.foi.uzdiz.krigaslje.dz3.composite;
  * @author kile
  */
 public interface Naselje {
-    
+
 }

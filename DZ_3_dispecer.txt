@@ -3,5 +3,7 @@ feg;
 GODIŠNJI ODMOR;pero,ivo;
 OTKAZ;fran,luka,miki;
 OTKAZ;dudo;
+VOZAČI;
 NOVI;renato,kile;
 PREUZMI;kile;v4;
+STATUS;
